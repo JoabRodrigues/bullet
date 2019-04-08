@@ -2,7 +2,7 @@
     echo '
     <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-      <a class="navbar-brand" href="#">Bullet Finanças</a>
+      <a class="navbar-brand" href="/">Bullet Finanças</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -19,7 +19,10 @@
                   </li>';
           }
           
-          if($_SERVER["REQUEST_URI"] == '/vendas'){
+          if($_SERVER["REQUEST_URI"] == '/vendas' 
+            || $_SERVER["REQUEST_URI"] == '/novopedido' 
+            || substr($_SERVER["REQUEST_URI"],0,7) == '/pedido'
+            || substr($_SERVER["REQUEST_URI"],0,20) == '/novoprodutodopedido'){
             echo '<li class="nav-item active">
                     <a class="nav-link" href="vendas">Vendas</a>
                   </li>';

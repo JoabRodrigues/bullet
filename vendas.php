@@ -6,27 +6,33 @@
 <?php
 echo '<main role="main" class="container"> ';
 
+// button new customer
+
+echo '<p><a href="/novopedido"><button type="button" class="btn btn-success">Novo Pedido</button></a></p>';
+
 include "pages/header-orders.html";
 
-echo '<tbody>
-<tr>
-  <th scope="row">1</th>
-  <td>Mark</td>
-  <td>Otto</td>
-  <td>@mdo</td>
-</tr>
-<tr>
-  <th scope="row">2</th>
-  <td>Jacob</td>
-  <td>Thornton</td>
-  <td>@fat</td>
-</tr>
-<tr>
-  <th scope="row">3</th>
-  <td colspan="2">Larry the Bird</td>
-  <td>@twitter</td>
-</tr>
-</tbody>
+
+$response = file_get_contents('http://localhost/api/endpoints/orders.php');
+
+$response = json_decode($response);
+
+echo '<tbody>'; 
+
+foreach ($response as $value) {
+    foreach ($value as $key => $value2) {
+    echo '
+        <tr>
+        <th scope="row">' . $value2->id . '</th>
+            <td>' . date("d/m/Y", strtotime($value2->created)) . ' </td>
+            <td>' . $value2->id . ' - ' . $value2->customers_name . '</td>
+            <td> R$ ' . number_format($value2->amount, 2) . ' </td>
+            <td>' . $value2->status . '</td>
+            <td><a href="/pedido?orders_id=' . $value2->id . '"><i class="fas fa-edit"></i></a></td>
+            </tr>';        
+    }
+}
+echo '</tbody> 
 </table>';
 
 echo '</main>';
@@ -35,7 +41,3 @@ echo '</main>';
 <?php
     include "pages/footer.html";
 ?>
-
-
-
-
