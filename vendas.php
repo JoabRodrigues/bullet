@@ -25,10 +25,12 @@ foreach ($response as $value) {
         <tr>
         <th scope="row">' . $value2->id . '</th>
             <td>' . date("d/m/Y", strtotime($value2->created)) . ' </td>
-            <td>' . $value2->id . ' - ' . $value2->customers_name . '</td>
+            <td>' . $value2->customers_id . ' - ' . ucwords(strtolower($value2->customers_name)) . '</td>
             <td> R$ ' . number_format($value2->amount, 2) . ' </td>
             <td>' . $value2->status . '</td>
-            <td><a href="/pedido?orders_id=' . $value2->id . '"><i class="fas fa-edit"></i></a></td>
+            <td>
+                <a href="/pedido?orders_id=' . $value2->id . '"><i class="fas fa-edit"></i></a>
+            </td>
             </tr>';        
     }
 }

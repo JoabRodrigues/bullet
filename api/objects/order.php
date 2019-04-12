@@ -92,10 +92,10 @@ class Order{
     }
 
     function updateBalance($orders_id){
-        $query = " UPDATE " . $this->table_name . "
+        $query = " UPDATE " . $this->table_name . " o
                 SET
-                    amount = (select sum(amount*quantity) total from products_has_order where orders_id = id group by orders_id)
-                WHERE id = " . $orders_id;
+                    amount = (select sum(amount*quantity) total from products_has_order po where po.orders_id = o.id group by orders_id)
+                WHERE o.id = " . $orders_id;
 
         $stmt = $this->conn->prepare($query);
     

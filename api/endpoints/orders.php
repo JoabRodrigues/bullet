@@ -47,6 +47,7 @@
                     "id" => $id,
                     "created" => $created,
                     "amount" => $amount,
+                    "customers_id" => $customers_id,
                     "customers_name" => $customers_name,
                     "status" => $status
                 );
