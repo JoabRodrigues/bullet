@@ -93,4 +93,26 @@ class User{
         
         return false;
     }
+
+    function validaToken($token,$organization){
+        $query = "SELECT u.id
+                FROM
+                    " . $this->table_name . " u
+                WHERE
+                    organizations_id = " . $organization . "
+                    and token = '" . $token . "' limit 1 ";
+
+        $stmt = $this->conn->prepare($query);
+    
+        // execute query
+        $stmt->execute();
+        
+        while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+            return $row[id];  
+        }
+
+        return null;
+        
+        
+    }
 }

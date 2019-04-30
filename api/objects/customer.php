@@ -13,6 +13,8 @@ class Customer{
     public $phone;
     public $status;
     public $created;
+    public $users_id;
+    public $organizations_id;
  
     // constructor with $db as database connection
     public function __construct($db){
@@ -25,7 +27,7 @@ class Customer{
         if($id == 0){
             // select all query
             $query = "SELECT
-                c.id, c.name, c.email, c.phone, c.created, 
+                c.id, c.name, c.email, c.phone, c.created, c.users_id, c.organizations_id,
                 case
                     when c.type = 1 then 'Pessoa Física' else 'Pessoa Jurídica'
                 end type,
@@ -39,7 +41,7 @@ class Customer{
         }else{
             // select all query
             $query = "SELECT
-                c.id, c.name, c.email, c.phone, c.created, 
+                c.id, c.name, c.email, c.phone, c.created, c.users_id, c.organizations_id,
                 case
                     when c.type = 1 then 'Pessoa Física' else 'Pessoa Jurídica'
                 end type,

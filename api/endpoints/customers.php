@@ -8,6 +8,7 @@
     // include database and object files
     include_once '../config/database.php';
     include_once '../objects/customer.php';
+    include_once '../objects/user.php';
     
     // instantiate database and customer object
     $database = new Database();
@@ -15,9 +16,31 @@
         
     // initialize object
     $customer = new Customer($db);
+    $user = new User($db);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        if(is_null($token) || is_null($organization)){
+            echo json_encode(
+                array("message" => "No token found.")
+            );
+            return;
+        }else{
+            // valida o token do usuário
+            $customer->users_id = $user->validaToken($token,$organization);
+            
+            if(is_null($customer->users_id)){
+                echo json_encode(
+                    array("message" => "token is not valid.")
+                );
+                return;
+            }
+        }
+
         // set ID property of record to read
         $customer->id = isset($_GET['id']) ? $_GET['id'] : 0;
         
@@ -50,7 +73,9 @@
                     "email" => $email,
                     "phone" => $phone,
                     "status" => $status,
-                    "created" => $created
+                    "created" => $created,
+                    "users_id" => $users_id,
+                    "organizations_id" => $organizations_id
                 );
         
                 array_push($customers_arr["records"], $customer_item);
@@ -78,7 +103,28 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // get posted data
         $data = json_decode(file_get_contents("php://input"));
-        
+
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        if(is_null($token) || is_null($organization)){
+            echo json_encode(
+                array("message" => "No token found.")
+            );
+            return;
+        }else{
+            // valida o token do usuário
+            $customer->users_id = $user->validaToken($token,$organization);
+            
+            if(is_null($customer->users_id)){
+                echo json_encode(
+                    array("message" => "token is not valid.")
+                );
+                return;
+            }
+        }
+
         // make sure data is not empty
         if(
             !empty($data->name) &&
@@ -126,5 +172,4 @@
             echo json_encode(array("message" => "Unable to create customer. Data is incomplete."));
         }
     }
-
 ?>
