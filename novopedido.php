@@ -4,7 +4,7 @@ include "pages/menu.php";
 
 echo '<main role="main" class="container"> ';
 
-$response = file_get_contents('http://localhost/api/endpoints/customers.php');
+$response = file_get_contents('http://localhost/api/endpoints/customers.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1');
 
 $response = json_decode($response);
 

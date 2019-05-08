@@ -7,16 +7,17 @@
     
     // include database and object files
     include_once '../config/database.php';
+    include_once '../util/validation.php';
     include_once '../objects/customer.php';
     include_once '../objects/user.php';
     
     // instantiate database and customer object
     $database = new Database();
     $db = $database->getConnection();
+    $validation = new Validation();
         
     // initialize object
     $customer = new Customer($db);
-    $user = new User($db);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         
@@ -24,29 +25,20 @@
         $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
 
         //verifica se existe token
-        if(is_null($token) || is_null($organization)){
-            echo json_encode(
-                array("message" => "No token found.")
-            );
-            return;
-        }else{
-            // valida o token do usuário
-            $customer->users_id = $user->validaToken($token,$organization);
-            
-            if(is_null($customer->users_id)){
-                echo json_encode(
-                    array("message" => "token is not valid.")
-                );
-                return;
-            }
-        }
+        $arrValidation = $validation->validaToken($token,$organization,$db);
 
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+        $customer->users_id = $arrValidation["userid"];
+        
         // set ID property of record to read
         $customer->id = isset($_GET['id']) ? $_GET['id'] : 0;
         
         // read customers will be here
         // query customers
-        $stmt = $customer->read($customer->id);
+        $stmt = $customer->read($customer->id,$organization);
         
         $num = $stmt->rowCount();
         
@@ -108,23 +100,13 @@
         $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
 
         //verifica se existe token
-        if(is_null($token) || is_null($organization)){
-            echo json_encode(
-                array("message" => "No token found.")
-            );
-            return;
-        }else{
-            // valida o token do usuário
-            $customer->users_id = $user->validaToken($token,$organization);
-            
-            if(is_null($customer->users_id)){
-                echo json_encode(
-                    array("message" => "token is not valid.")
-                );
-                return;
-            }
-        }
+        $arrValidation = $validation->validaToken($token,$organization,$db);
 
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+        
         // make sure data is not empty
         if(
             !empty($data->name) &&
@@ -140,6 +122,8 @@
             $customer->phone = $data->phone;
             $customer->status = 1;
             $customer->created = date('Y-m-d H:i:s');
+            $customer->users_id = $arrValidation["userid"];
+            $customer->organizations_id = $organization;
 
             // create the customer
             if($customer->create()){

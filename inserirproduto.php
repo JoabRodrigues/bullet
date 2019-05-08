@@ -1,6 +1,6 @@
 <?php
 
-$service_url = 'http://localhost/api/endpoints/products.php';
+$service_url = 'http://localhost/api/endpoints/products.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1';
 $curl = curl_init($service_url);
 
 $curl_post_data = array(

@@ -7,23 +7,39 @@
     
     // include database and object files
     include_once '../config/database.php';
+    include_once '../util/validation.php';
     include_once '../objects/product.php';
+    include_once '../objects/user.php';
     
     // instantiate database and product object
     $database = new Database();
     $db = $database->getConnection();
+    $validation = new Validation();
         
     // initialize object
     $product = new Product($db);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        $arrValidation = $validation->validaToken($token,$organization,$db);
+
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+        $product->users_id = $arrValidation["userid"];
+        
         
         // set ID property of record to read
         $product->id = isset($_GET['id']) ? $_GET['id'] : 0;
         
         // read products will be here
         // query products
-        $stmt = $product->read($product->id);
+        $stmt = $product->read($product->id,$organization);
         
         $num = $stmt->rowCount();
         
@@ -48,7 +64,9 @@
                     "name" => $name,
                     "amount" => $amount,
                     "status" => $status,
-                    "created" => $created
+                    "created" => $created,
+                    "users_id" => $users_id,
+                    "organizations_id" => $organizations_id
                 );
         
                 array_push($products_arr["records"], $product_item);
@@ -76,6 +94,17 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // get posted data
         $data = json_decode(file_get_contents("php://input"));
+
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        $arrValidation = $validation->validaToken($token,$organization,$db);
+
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
         
         // make sure data is not empty
         if(
@@ -88,6 +117,8 @@
             $product->amount = $data->amount;
             $product->status = 1;
             $product->created = date('Y-m-d H:i:s');
+            $product->users_id = $arrValidation["userid"];
+            $product->organizations_id = $organization;
 
             // create the product
             if($product->create()){

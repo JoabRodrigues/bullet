@@ -23,7 +23,7 @@ class Customer{
 
 
     // read customers
-    function read($id){
+    function read($id,$organization){
         if($id == 0){
             // select all query
             $query = "SELECT
@@ -36,6 +36,8 @@ class Customer{
                 end status
                 FROM
                 " . $this->table_name . " c
+                WHERE 
+                    c.organizations_id = " . $organization . "
                 ORDER BY
                 c.created DESC";
         }else{
@@ -51,7 +53,8 @@ class Customer{
                 FROM
                 " . $this->table_name . " c
                 WHERE 
-                    id = " . $id . " 
+                    c.organizations_id = " . $organization . "
+                    and c.id = " . $id . " 
                 ORDER BY
                 c.created DESC";
         }
@@ -72,7 +75,7 @@ class Customer{
         $query = "INSERT INTO
                     " . $this->table_name . "
                 SET
-                    name=:name, type=:type, email=:email, phone=:phone, status=:status, created=:created";
+                    name=:name, type=:type, email=:email, phone=:phone, status=:status, created=:created, users_id=:users_id, organizations_id=:organizations_id";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -84,6 +87,8 @@ class Customer{
         $this->phone=htmlspecialchars(strip_tags($this->phone));
         $this->status=htmlspecialchars(strip_tags($this->status));
         $this->created=htmlspecialchars(strip_tags($this->created));
+        $this->users_id=htmlspecialchars(strip_tags($this->users_id));
+        $this->organizations_id=htmlspecialchars(strip_tags($this->organizations_id));
     
         // bind values
         $stmt->bindParam(":name", $this->name);
@@ -92,7 +97,8 @@ class Customer{
         $stmt->bindParam(":phone", $this->phone);
         $stmt->bindParam(":status", $this->status);
         $stmt->bindParam(":created", $this->created);
-        
+        $stmt->bindParam(":users_id", $this->users_id);
+        $stmt->bindParam(":organizations_id", $this->organizations_id);
         // execute query
         if($stmt->execute()){
             return true;

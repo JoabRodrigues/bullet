@@ -7,19 +7,40 @@
     
     // include database and object files
     include_once '../config/database.php';
+    include_once '../util/validation.php';
     include_once '../objects/products_has_order.php';
     
     // instantiate database and product object
     $database = new Database();
     $db = $database->getConnection();
+    $validation = new Validation();
         
     // initialize object
     $products_has_order = new Products_Has_Order($db);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        $arrValidation = $validation->validaToken($token,$organization,$db);
+
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+        $products_has_order->users_id = $arrValidation["userid"];
         
         // set ID property of record to read
         $products_has_order->orders_id = isset($_GET['orders_id']) ? $_GET['orders_id'] : 0;
+
+        if($products_has_order->orders_id == 0){
+            echo json_encode(
+                array("message" => "Order id not found.")
+            );   
+            return;
+        }
         
         // read products will be here
         // query products
@@ -76,6 +97,18 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        $arrValidation = $validation->validaToken($token,$organization,$db);
+
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+
         // get posted data
         $data = json_decode(file_get_contents("php://input"));
         
@@ -93,6 +126,7 @@
             $products_has_order->quantity = $data->quantity;
             $products_has_order->amount = $data->amount;
             $products_has_order->status = 1;
+            $products_has_order->users_id = $arrValidation["userid"];
             
             // create the product
             if($products_has_order->create()){

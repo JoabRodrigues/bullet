@@ -20,23 +20,25 @@ class Order{
 
 
     // read customers
-    function read($id){
+    function read($id,$organization){
         if($id == 0){
             // select all query
             $query = "SELECT
-                o.id, o.created, o.amount, o.customers_id, c.name customers_name,
+                o.id, o.created, o.amount, o.customers_id, c.name customers_name, o.users_id, o.organizations_id,
                 case
                     when o.status = 1 then 'Aberto' else 'Faturado' 
                 end status
                 FROM
                 " . $this->table_name . " o
                     join customers c on (c.id = o.customers_id)
+                WHERE
+                    o.organizations_id = " . $organization . "
                 ORDER BY
                 o.created DESC";
         }else{
             // select all query
             $query = "SELECT
-                o.id, o.created, o.amount, o.customers_id, c.name customers_name,
+                o.id, o.created, o.amount, o.customers_id, c.name customers_name, o.users_id, o.organizations_id,
                 case
                     when o.status = 1 then 'Aberto' else 'Faturado' 
                 end status
@@ -44,7 +46,8 @@ class Order{
                 " . $this->table_name . " o
                     join customers c on (c.id = o.customers_id)
                 WHERE 
-                    o.id = " . $id . " 
+                    o.organizations_id = " . $organization . "
+                    and o.id = " . $id . " 
                 ORDER BY
                 o.created DESC";
         }
@@ -65,7 +68,7 @@ class Order{
         $query = "INSERT INTO
                     " . $this->table_name . "
                 SET
-                    created=:created, amount=:amount, status=:status, customers_id=:customers_id";
+                    created=:created, amount=:amount, status=:status, customers_id=:customers_id, users_id=:users_id, organizations_id=:organizations_id";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -75,6 +78,8 @@ class Order{
         $this->amount=htmlspecialchars(strip_tags($this->amount));
         $this->status=htmlspecialchars(strip_tags($this->status));
         $this->customer_id=htmlspecialchars(strip_tags($this->customers_id));
+        $this->users_id=htmlspecialchars(strip_tags($this->users_id));
+        $this->organizations_id=htmlspecialchars(strip_tags($this->organizations_id));
         
     
         // bind values
@@ -82,6 +87,8 @@ class Order{
         $stmt->bindParam(":amount", $this->amount);
         $stmt->bindParam(":status", $this->status);
         $stmt->bindParam(":customers_id", $this->customers_id);
+        $stmt->bindParam(":users_id", $this->users_id);
+        $stmt->bindParam(":organizations_id", $this->organizations_id);
         
         // execute query
         if($stmt->execute()){

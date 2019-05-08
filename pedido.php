@@ -13,7 +13,7 @@ echo '<p><a href="/novoprodutodopedido?orders_id=' . $_GET['orders_id'] . '"><bu
 include "pages/header-products_has_order.html";
 
 
-$response = file_get_contents('http://localhost/api/endpoints/products_has_order.php?orders_id=' . $_GET['orders_id']);
+$response = file_get_contents('http://localhost/api/endpoints/products_has_order.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1&orders_id=' . $_GET['orders_id']);
 
 $response = json_decode($response);
 

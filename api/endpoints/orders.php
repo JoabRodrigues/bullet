@@ -7,23 +7,37 @@
     
     // include database and object files
     include_once '../config/database.php';
+    include_once '../util/validation.php';
     include_once '../objects/order.php';
     
     // instantiate database and product object
     $database = new Database();
     $db = $database->getConnection();
-        
+    $validation = new Validation();    
+
     // initialize object
     $order = new Order($db);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        $arrValidation = $validation->validaToken($token,$organization,$db);
+
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+        $order->users_id = $arrValidation["userid"];
         
         // set ID property of record to read
         $order->id = isset($_GET['id']) ? $_GET['id'] : 0;
         
         // read products will be here
         // query products
-        $stmt = $order->read($order->id);
+        $stmt = $order->read($order->id,$organization);
         
         $num = $stmt->rowCount();
         
@@ -75,6 +89,18 @@
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        
+        $token = isset($_GET['token']) ? $_GET['token'] : null;
+        $organization = isset($_GET['organization']) ? $_GET['organization'] : null;
+
+        //verifica se existe token
+        $arrValidation = $validation->validaToken($token,$organization,$db);
+
+        if(is_null($arrValidation["userid"])){
+            echo json_encode($arrValidation);
+            return;
+        }
+        
         // get posted data
         $data = json_decode(file_get_contents("php://input"));
         
@@ -89,6 +115,8 @@
             $order->status = 1;
             $order->created = date('Y-m-d H:i:s');
             $order->customers_id = $data->customers_id;
+            $order->users_id = $arrValidation["userid"];
+            $order->organizations_id = $organization;
 
             // create the product
             $id_created = $order->create();

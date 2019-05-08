@@ -25,7 +25,7 @@ class Products_Has_Order{
     function read($id){
             // select 
             $query = "SELECT
-                pho.products_id, p.name products_name, pho.orders_id, pho.quantity, pho.amount,  
+                pho.products_id, p.name products_name, pho.orders_id, pho.quantity, pho.amount, pho.users_id, 
                 case
                     when pho.status = 1 then 'Ativo' else 'Cancelado' 
                 end status
@@ -52,7 +52,7 @@ class Products_Has_Order{
         $query = "INSERT INTO
                     " . $this->table_name . "
                 SET
-                    products_id=:products_id, orders_id=:orders_id, quantity=:quantity, amount=:amount, status=:status";
+                    products_id=:products_id, orders_id=:orders_id, quantity=:quantity, amount=:amount, status=:status, users_id=:users_id";
     
         // prepare query
         $stmt = $this->conn->prepare($query);
@@ -63,6 +63,7 @@ class Products_Has_Order{
         $this->quantity=htmlspecialchars(strip_tags($this->quantity));
         $this->amount=htmlspecialchars(strip_tags($this->amount));
         $this->status=htmlspecialchars(strip_tags($this->status));
+        $this->users_id=htmlspecialchars(strip_tags($this->users_id));
         
         
     
@@ -72,6 +73,7 @@ class Products_Has_Order{
         $stmt->bindParam(":quantity", $this->quantity);
         $stmt->bindParam(":amount", $this->amount);
         $stmt->bindParam(":status", $this->status);
+        $stmt->bindParam(":users_id", $this->users_id);
         
         // execute query
         if($stmt->execute()){

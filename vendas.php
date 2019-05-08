@@ -13,7 +13,7 @@ echo '<p><a href="/novopedido"><button type="button" class="btn btn-success">Nov
 include "pages/header-orders.html";
 
 
-$response = file_get_contents('http://localhost/api/endpoints/orders.php');
+$response = file_get_contents('http://localhost/api/endpoints/orders.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1');
 
 $response = json_decode($response);
 
