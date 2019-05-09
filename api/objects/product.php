@@ -11,6 +11,8 @@ class Product{
     public $amount;
     public $status;
     public $created;
+    public $users_id;
+    public $organizations_id;
  
     // constructor with $db as database connection
     public function __construct($db){

@@ -11,6 +11,8 @@ class Order{
     public $amount;
     public $status;
     public $customer_id;
+    public $users_id;
+    public $organizations_id;
     
  
     // constructor with $db as database connection

@@ -14,6 +14,7 @@ class Products_Has_Order{
     public $quantity;
     public $amount;
     public $status;
+    public $users_id;
     
     // constructor with $db as database connection
     public function __construct($db){
