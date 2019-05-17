@@ -10,7 +10,8 @@ class Order{
     public $created;
     public $amount;
     public $status;
-    public $customer_id;
+    public $customers_id;
+    public $customers_name;
     public $users_id;
     public $organizations_id;
     
@@ -59,8 +60,37 @@ class Order{
     
         // execute query
         $stmt->execute();
-    
+        
         return $stmt;
+    }
+
+    function getOrder($id,$organization){
+        $query = "SELECT
+                    o.id, o.created, o.amount, o.customers_id, c.name customers_name, o.users_id, o.organizations_id, o.status
+                FROM
+                    " . $this->table_name . " o
+                    join customers c on (c.id = o.customers_id)
+                WHERE 
+                    o.organizations_id = " . $organization . "
+                    and o.id = " . $id . " 
+                ORDER BY
+                o.created DESC";
+        
+        $stmt = $this->conn->prepare($query);
+    
+        // execute query
+        $stmt->execute();
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $this->id = $row[id];
+        $this->created = $row[id];
+        $this->amount = $row[amount];
+        $this->customer_id = $row[customers_id];
+        $this->$customer_name = $row[customers_name];
+        $this->$users_id = $row[users_id];
+        $this->organizations_id = $row[organizations_id];
+        $this->status = $row[status];
+        
     }
 
     // create customer
@@ -98,6 +128,18 @@ class Order{
         }
 
         return 0;
+    }
+
+    function updateStatusOrder($orders_id,$status){
+        $query = " UPDATE " . $this->table_name . " o
+                    SET
+                        o.status = " . $status . "
+                    WHERE o.id = " . $orders_id;
+
+        $stmt = $this->conn->prepare($query);
+    
+        // execute query
+        $stmt->execute();
     }
 
     function updateBalance($orders_id){
