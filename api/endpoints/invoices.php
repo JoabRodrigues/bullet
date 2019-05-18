@@ -144,7 +144,10 @@
             if($invoice->create()){
 
                 // cria as parcelas da fatura
-                criaParcelas($data->pagamentos,$invoice->id);
+                if(!criaParcelas($data->pagamentos,$invoice->id)){
+                    echo json_encode(array("message" => "Erro ao criar as parcelas.")); 
+                    return; 
+                };
 
                 $statusOrder = 2; // faturado
                 // change status order
@@ -194,31 +197,47 @@
     }
 
     function criaParcelas($pagamentos,$invoiceId){
-        $parcela = new Parcela($db);
         foreach ($pagamentos as $pagamento) {
             for ($i=0; $i < $pagamento->numero_parcelas; $i++) { 
+                $parcela = new Parcela();
                 $parcela->data_criacao = date('Y-m-d H:i:s');;
-                $parcela->data_vencimento = dataVencimento($pagamento->data_vencimento,$i+1);
+                $parcela->data_vencimento = $parcela->calculaDataVencimento($pagamento->data_vencimento,$i);
                 $parcela->data_pagamento = null;
                 $parcela->forma_pagamento = $pagamento->tipo_pagamento;
                 $parcela->numero_parcela = $i+1;
                 $parcela->status = 1;
                 $parcela->fatura_id = $invoiceId;
                 if($pagamento->tipo_pagamento == 'cartao_credito'){
+                    $parcela->data_vencimento = $parcela->calculaDataVencimento($pagamento->data_vencimento,$i+1); // pagamento em cartão leva 30 dias para cair na conta
                     $parcela->bandeira_cartao = $pagamento->bandeira;
                     $parcela->ultimos_4_digitos_cartao = $pagamento->ultimos_4_digitos_cartao;
                 }
+ 
+                if($i == 0){
+                    $valorParcelas = number_format((float)($pagamento->valor_total / $pagamento->numero_parcelas), 2, '.', '');
+                    
+                    $valorTotalParcelas = $valorParcelas * $pagamento->numero_parcelas;
 
-                $parcela->criaParcela(); // função do objeto
+                    if($valorTotalParcelas > $pagamento->valor_total){
+                        $valorDesconto = $valorTotalParcelas - $pagamento->valor_total;
+                        $valorPrimeiraParcela = $valorParcelas - $valorDesconto; 
+                        $valorParcela = $valorPrimeiraParcela;   
+                    }elseif ($valorTotalParcelas < $pagamento->valor_total) {
+                        $valorSoma = $pagamento->valor_total - $valorTotalParcelas;
+                        $valorPrimeiraParcela = $valorParcelas + $valorSoma;
+                        $valorParcela = $valorPrimeiraParcela;
+                    }
+                    $valorParcela = $valorParcelas ;    
+                }else{
+                    $valorParcela = number_format((float)($pagamento->valor_total / $pagamento->numero_parcelas), 2, '.', '');
+                }
+                
+                $parcela->valor = $valorParcela;
+
+                $parcela->criaParcela(); 
             }
         }
+        return true;
     }
 
-    //calcula a data de vencimento da parcela
-    function dataVencimento($data,$mes){
-        if($mes == 1){
-            return $data;
-        }
-
-    }
 ?>
