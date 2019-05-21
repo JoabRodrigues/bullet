@@ -27,13 +27,13 @@ class Order{
         if($id == 0){
             // select all query
             $query = "SELECT
-                o.id, o.created, o.amount, o.customers_id, c.name customers_name, o.users_id, o.organizations_id,
+                o.id, o.created, o.amount, o.customers_id, c.nome customers_name, o.users_id, o.organizations_id,
                 case
                     when o.status = 1 then 'Aberto' else 'Faturado' 
                 end status
                 FROM
                 " . $this->table_name . " o
-                    join customers c on (c.id = o.customers_id)
+                    join clientes c on (c.id = o.customers_id)
                 WHERE
                     o.organizations_id = " . $organization . "
                 ORDER BY

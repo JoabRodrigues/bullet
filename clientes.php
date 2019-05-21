@@ -21,22 +21,26 @@ echo '<tbody>';
 
 foreach ($response as $value) {
     foreach ($value as $key => $value2) {
-    echo '
-        <tr>
-        <th scope="row">' . $value2->id . '</th>
-            <td>' . $value2->name . ' </td>
-            <td>' . $value2->type . ' </td>
-            <td>' . $value2->email . '</td>
-            <td>' . $value2->phone . ' </td>
-            <td>' . $value2->status . ' </td>
-            <td><i class="fas fa-user-edit"></i></td>
-            </tr>';        
+        foreach ($value2 as $key3 => $value3) {
+            echo '
+            <tr>
+            <th scope="row">' . $value3->id . '</th>
+                <td>' . $value3->nome . ' </td>
+                <td>' . $value3->tipo . ' </td>
+                <td>' . $value3->email . '</td>
+                <td>' . $value3->telefone . ' </td>
+                <td>' . $value3->status . ' </td>
+                <td><i class="fas fa-user-edit"></i></td>
+                </tr>';        
+        
+        }
     }
 }
 echo '</tbody> 
 </table>';
 
 echo '</main>';
+
 ?>
 
 <?php
