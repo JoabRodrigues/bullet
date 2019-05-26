@@ -1,11 +1,11 @@
 <?php
 
-$service_url = 'http://localhost/api/endpoints/products.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1';
+$service_url = 'http://localhost/api/endpoints/produtos.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1';
 $curl = curl_init($service_url);
 
 $curl_post_data = array(
-        'name' => $_POST['name'],
-        'amount' => $_POST['amount']
+        'nome' => $_POST['nome'],
+        'valor' => $_POST['valor']
 );
 
 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -15,7 +15,7 @@ $curl_response = curl_exec($curl);
 
 $data_response = json_decode($curl_response);
 
-if($data_response->message == 'Product was created.'){
+if($data_response->message == 'Produto criado com sucesso.'){
     header("Location: /produtos");
 }else{
     include "pages/header.html";

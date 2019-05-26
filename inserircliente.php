@@ -17,7 +17,7 @@ $curl_response = curl_exec($curl);
 
 $data_response = json_decode($curl_response);
 
-if($data_response->message == 'Customer was created.'){
+if($data_response->message == 'Cliente criado com sucesso.'){
     header("Location: /clientes");
 }else{
     include "pages/header.html";

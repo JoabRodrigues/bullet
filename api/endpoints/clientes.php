@@ -5,19 +5,16 @@
     header("Access-Control-Max-Age: 3600");
     header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
     
-    // include database and object files
     include_once '../config/database.php';
     include_once '../util/validation.php';
-    include_once '../objects/customer.php';
+    include_once '../objects/cliente.php';
     include_once '../objects/user.php';
     
-    // instantiate database and customer object
     $database = new Database();
     $db = $database->getConnection();
     $validation = new Validation();
         
-    // initialize object
-    $customer = new Customer($db);
+    $cliente = new Cliente($db);
 
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         
@@ -31,24 +28,24 @@
             echo json_encode($arrValidation);
             return;
         }
-        $customer->users_id = $arrValidation["userid"];
+        $cliente->users_id = $arrValidation["userid"];
         
         // set ID property of record to read
-        $customer->id = isset($_GET['id']) ? $_GET['id'] : 0;
+        $cliente->id = isset($_GET['id']) ? $_GET['id'] : 0;
         
-        $customers_arr=array();
-        $customers_arr["records"] = array();
+        $clientes_arr=array();
+        $clientes_arr["records"] = array();
         
         // Busca os clientes
-        $customer_item = $customer->read($customer->id,$organization);
+        $cliente_item = $cliente->getClientes($cliente->id,$organization);
         
-        array_push($customers_arr["records"], $customer_item);
+        array_push($clientes_arr["records"], $cliente_item);
 
          // set response code - 200 OK
         http_response_code(200);
         
          // show customers data in json format
-        echo json_encode($customers_arr);
+        echo json_encode($clientes_arr);
 
     }
 
@@ -76,23 +73,23 @@
         ){
         
             // set customer property values
-            $customer->nome = $data->name;
-            $customer->tipo = $data->type;
-            $customer->email = $data->email;
-            $customer->telefone = $data->phone;
-            $customer->status = 1;
-            $customer->data_criacao = date('Y-m-d H:i:s');
-            $customer->users_id = $arrValidation["userid"];
-            $customer->organizations_id = $organization;
+            $cliente->nome = $data->name;
+            $cliente->tipo = $data->type;
+            $cliente->email = $data->email;
+            $cliente->telefone = $data->phone;
+            $cliente->status = 1;
+            $cliente->data_criacao = date('Y-m-d H:i:s');
+            $cliente->users_id = $arrValidation["userid"];
+            $cliente->organizations_id = $organization;
 
             // create the customer
-            if($customer->create()){
+            if($cliente->insertCliente()){
         
                 // set response code - 201 created
                 http_response_code(201);
         
                 // tell the user
-                echo json_encode(array("message" => "Customer was created."));
+                echo json_encode(array("message" => "Cliente criado com sucesso."));
             }
         
             // if unable to create the customer, tell the user
@@ -102,7 +99,7 @@
                 http_response_code(503);
         
                 // tell the user
-                echo json_encode(array("message" => "Unable to create customer."));
+                echo json_encode(array("message" => "Não foi possivel criar o cliente."));
             }
         }
     
@@ -113,7 +110,7 @@
             http_response_code(400);
         
             // tell the user
-            echo json_encode(array("message" => "Unable to create customer. Data is incomplete."));
+            echo json_encode(array("message" => "Não foi possivel criar o cliente. Os dados estão incompletos."));
         }
     }
 ?>

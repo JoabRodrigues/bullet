@@ -1,6 +1,5 @@
 <?php
 class Invoice{
- 
     // database connection and table name
     private $conn;
     private $table_name = "invoices";

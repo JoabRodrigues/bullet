@@ -1,9 +1,8 @@
 <?php
 include_once '../dao/daoCliente.php';
 
-class Customer{
-    
-    // object properties
+class Cliente{
+
     public $id;
     public $nome;
     public $tipo;
@@ -14,11 +13,8 @@ class Customer{
     public $users_id;
     public $organizations_id;
  
-    // read customers
-    function read($id,$organization){
+    function getClientes($id,$organization){
         if($id == 0){
-
-            // busca na DAO o getAllClientes();
             $daoCliente = new daoCliente();
 
             try {
@@ -28,8 +24,6 @@ class Customer{
             }
 
         }else{
-            // select all query
-           // busca na DAO o getAllClientes();
            $daoCliente = new daoCliente();
 
            try {
@@ -42,10 +36,8 @@ class Customer{
         return $clientes;
     }
 
-    // create customer
-    function create(){
+    function insertCliente(){
     
-        // busca na DAO o getAllClientes();
         $daoCliente = new daoCliente();
 
         // sanitize

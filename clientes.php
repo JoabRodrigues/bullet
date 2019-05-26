@@ -10,10 +10,10 @@ echo '<main role="main" class="container"> ';
 
 echo '<p><a href="/novocliente"><button type="button" class="btn btn-success">Novo Cliente</button></a></p>';
 
-include "pages/header-customers.html";
+include "pages/header-clientes.html";
 
 
-$response = file_get_contents('http://localhost/api/endpoints/customers.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1');
+$response = file_get_contents('http://localhost/api/endpoints/clientes.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1');
 
 $response = json_decode($response);
 
