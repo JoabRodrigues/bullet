@@ -2,10 +2,6 @@
 include_once '../dao/daoPedidoDeVenda.php';
 class PedidoDeVenda{
  
-    // database connection and table name
-    private $conn;
-    private $table_name = "orders";
- 
     // object properties
     public $id;
     public $data_criacao;
@@ -18,12 +14,10 @@ class PedidoDeVenda{
     
  
     // constructor with $db as database connection
-    public function __construct($db){
-        $this->conn = $db;
+    public function __construct(){
     }
 
 
-    //TODO: mudar consulta por id para DAO
     function getPedidos($id,$organization){
         if($id == 0){
             $daoPedidoDeVenda = new daoPedidoDeVenda();
@@ -46,6 +40,14 @@ class PedidoDeVenda{
         }
         return $pedidos; 
         
+    }
+
+    function getPedidoFatura($id,$organization){
+        $daoPedidoDeVenda = new daoPedidoDeVenda();
+        
+        $daoPedidoDeVenda->getPedidoFatura($id,$organization,$this);
+
+        return $this;
     }
 
     function insertPedidoDeVenda(){
@@ -98,7 +100,7 @@ class PedidoDeVenda{
         
     }
 
-    function updateStatusOrder($id,$status){
+    function updateStatusPedidoDeVenda($id,$status){
         $daoPedidoDeVenda = new daoPedidoDeVenda();
 
         $daoPedidoDeVenda->updateStatusPedidoDeVenda($id,$status);
@@ -109,7 +111,7 @@ class PedidoDeVenda{
 
         $daoPedidoDeVenda = new daoPedidoDeVenda();
 
-        $daoPedidoDeVenda->updateValorTotalPedido($id);
+        $daoPedidoDeVenda->updateValorTotalPedidoDeVenda($id);
 
     }
 

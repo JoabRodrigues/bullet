@@ -114,6 +114,51 @@
 
         }
 
+        function getPedidoFatura($id,$org,$pedido){
+            $query = "SELECT
+            o.id, o.data_criacao, o.valor_total, o.cliente_id, c.nome cliente_nome, o.users_id, o.organizations_id,
+            case
+                when o.status = 1 then 'Aberto' else 'Faturado' 
+            end status
+            FROM
+            " . $this->table_name . " o
+                join clientes c on (c.id = o.cliente_id)
+            WHERE 
+                o.organizations_id = " . $org . "
+                and o.id = " . $id . " 
+            ORDER BY
+            o.data_criacao DESC";
+
+
+            // prepare query statement
+            $stmt = $this->conn->prepare($query);
+        
+            // execute query
+            $stmt->execute();
+
+            $num = $stmt->rowCount();
+
+            if($num>0){
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
+                    extract($row);
+
+                    $pedido->id = $id;
+                    $pedido->data_criacao = $data_criacao;
+                    $pedido->valor_total = $valor_total;
+                    $pedido->cliente_id = $cliente_id;
+                    $pedido->cliente_nome = $cliente_nome;
+                    $pedido->status = $status;
+                    $pedido->users_id = $users_id;
+                    $pedido->organizations_id = $organizations_id;
+                }
+            }else{
+                throw new Exception("Nenhum pedido de venda encontrado.");
+            }
+
+            return $pedido;
+
+        }
+
         function insertPedidoDeVenda($pedido){
             $query = "INSERT INTO
                         " . $this->table_name . "
@@ -148,10 +193,10 @@
         }
 
         function updateStatusPedidoDeVenda($id,$status){
-            $query = " UPDATE " . $this->table_name . " o
+            $query = " UPDATE " . $this->table_name . " pv
                     SET
-                        o.status = " . $status . "
-                    WHERE o.id = " . $id;
+                        pv.status = " . $status . "
+                    WHERE pv.id = " . $id;
 
             $stmt = $this->conn->prepare($query);
     
@@ -163,7 +208,7 @@
 
             $query = " UPDATE " . $this->table_name . " o
                 SET
-                    amount = (select sum(amount*quantity) total from products_has_order po where po.orders_id = o.id group by orders_id)
+                    valor_total = (select sum(valor*quantidade) total from itens_pedido_de_venda ipv where ipv.pedido_de_venda_id = o.id group by pedido_de_venda_id)
                 WHERE o.id = " . $id;
 
             $stmt = $this->conn->prepare($query);

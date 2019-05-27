@@ -8,8 +8,8 @@
     // include database and object files
     include_once '../config/database.php';
     include_once '../util/validation.php';
-    include_once '../objects/invoice.php';
-    include_once '../objects/order.php';
+    include_once '../objects/fatura.php';
+    include_once '../objects/pedidoDeVenda.php';
     include_once '../objects/user.php';
     include_once '../objects/parcela.php';
     
@@ -19,7 +19,7 @@
     $validation = new Validation();
         
     // initialize object
-    $invoice = new Invoice($db);
+    $fatura = new Fatura();
     if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         
         $token = isset($_GET['token']) ? $_GET['token'] : null;
@@ -32,62 +32,24 @@
             echo json_encode($arrValidation);
             return;
         }
-        //$customer->users_id = $arrValidation["userid"];
-        
+    
         // set ID property of record to read
-        $invoice->id = isset($_GET['id']) ? $_GET['id'] : 0;
+        $fatura->id = isset($_GET['id']) ? $_GET['id'] : 0;
         
-        // read customers will be here
-        // query customers
-        $stmt = $invoice->read($invoice->id,$organization);
+        $faturas_arr=array();
+        $faturas_arr["records"] = array();
         
-        $num = $stmt->rowCount();
+        // Busca os clientes
+        $fatura_item = $fatura->getFaturas($fatura->id,$organization);
         
-        // check if more than 0 record found
-        if($num>0){
+        array_push($faturas_arr["records"], $fatura_item);
+
+         // set response code - 200 OK
+        http_response_code(200);
         
-            // customers array
-            $invoice_arr=array();
-            $invoice_arr["records"]=array();
+         // show customers data in json format
+        echo json_encode($faturas_arr);
         
-            // retrieve our table contents
-            // fetch() is faster than fetchAll()
-            // http://stackoverflow.com/questions/2770630/pdofetchall-vs-pdofetch-in-a-loop
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-                // extract row
-                // this will make $row['name'] to
-                // just $name only
-                extract($row);
-        
-                $invoice_item=array(
-                    "id" => $id,
-                    "created" => $created,
-                    "amount" => $amount,
-                    "status" => $status,
-                    "orders_id" => $orders_id,
-                    "users_id" => $users_id,
-                    "organizations_id" => $organizations_id
-                );
-        
-                array_push($invoice_arr["records"], $invoice_item);
-            }
-        
-            // set response code - 200 OK
-            http_response_code(200);
-        
-            // show customers data in json format
-            echo json_encode($invoice_arr);
-        }
-        else{
-        
-            // set response code - 404 Not found
-            http_response_code(404);
-        
-            // tell the user no customers found
-            echo json_encode(
-                array("message" => "No invoices found.")
-            );
-        }
     }
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -111,47 +73,42 @@
             !empty($data->pagamentos)
         ){
             
-            
-            //echo json_encode(array("message" => $data->payments));
-
             //get data from order
-            $order = new Order($db);
-            $order->getOrder($data->order_id,$organization);    
+            $pedidoDeVenda = new PedidoDeVenda();
+            $pedidoDeVenda->getPedidoFatura($data->order_id,$organization);    
 
             // valida se o pedido de venda está em aberto para faturar.
-            if($order->status != 1){
+            if($pedidoDeVenda->status != 'Aberto'){
                 echo json_encode(array("message" => "O pedido de venda não está em aberto para faturamento."));
                 return;
             }
             
             // valida e os pagamentos estão de acordo com o valor total do pedido.
-            if(!validaPagamento($data->pagamentos,$order->amount)){
+            if(!validaPagamento($data->pagamentos,$pedidoDeVenda->valor_total)){
                 echo json_encode(array("message" => "O Valor total dos pagamentos não está de acordo com o valor total do pedido."));
                 return;
             }
-
-            
             
             // set customer property values
-            $invoice->created = date('Y-m-d H:i:s');
-            $invoice->amount = $order->amount;
-            $invoice->status = 1;
-            $invoice->orders_id = $order->id;
-            $invoice->users_id = $arrValidation["userid"];
-            $invoice->organizations_id = $organization;
+            $fatura->data_criacao = date('Y-m-d H:i:s');
+            $fatura->valor_total = $pedidoDeVenda->valor_total;
+            $fatura->status = 1;
+            $fatura->pedido_de_venda_id = $pedidoDeVenda->id;
+            $fatura->users_id = $arrValidation["userid"];
+            $fatura->organizations_id = $organization;
 
             // create the customer
-            if($invoice->create()){
+            if($fatura->insertFatura()){
 
                 // cria as parcelas da fatura
-                if(!criaParcelas($data->pagamentos,$invoice->id)){
+                if(!criaParcelas($data->pagamentos,$fatura->id)){
                     echo json_encode(array("message" => "Erro ao criar as parcelas.")); 
                     return; 
                 };
 
-                $statusOrder = 2; // faturado
+                $statusPedidoDeVenda = 2; // faturado
                 // change status order
-                $order->updateStatusOrder($invoice->orders_id,$statusOrder);
+                $pedidoDeVenda->updateStatusPedidoDeVenda($fatura->pedido_de_venda_id,$statusPedidoDeVenda);
 
                 // set response code - 201 created
                 http_response_code(201);
@@ -196,7 +153,7 @@
         return false;
     }
 
-    function criaParcelas($pagamentos,$invoiceId){
+    function criaParcelas($pagamentos,$faturaId){
         foreach ($pagamentos as $pagamento) {
             for ($i=0; $i < $pagamento->numero_parcelas; $i++) { 
                 $parcela = new Parcela();
@@ -206,7 +163,7 @@
                 $parcela->forma_pagamento = $pagamento->tipo_pagamento;
                 $parcela->numero_parcela = $i+1;
                 $parcela->status = 1;
-                $parcela->fatura_id = $invoiceId;
+                $parcela->fatura_id = $faturaId;
                 if($pagamento->tipo_pagamento == 'cartao_credito'){
                     $parcela->data_vencimento = $parcela->calculaDataVencimento($pagamento->data_vencimento,$i+1); // pagamento em cartão leva 30 dias para cair na conta
                     $parcela->bandeira_cartao = $pagamento->bandeira;
