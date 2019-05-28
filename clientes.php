@@ -1,4 +1,5 @@
 <?php
+    include "validasessao.php";
     include "pages/header.html";
     include "pages/menu.php";
 ?>
@@ -13,7 +14,7 @@ echo '<p><a href="/novocliente"><button type="button" class="btn btn-success">No
 include "pages/header-clientes.html";
 
 
-$response = file_get_contents('http://localhost/api/endpoints/clientes.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1');
+$response = file_get_contents('http://localhost/api/endpoints/clientes.php?token=' . $_SESSION['tokenUsuario'] . '&organization=' . $_SESSION['orgUsuario']);
 
 $response = json_decode($response);
 

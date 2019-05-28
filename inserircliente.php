@@ -1,6 +1,7 @@
 <?php
+include "validasessao.php";
 
-$service_url = 'http://localhost/api/endpoints/customers.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1';
+$service_url = 'http://localhost/api/endpoints/clientes.php?token='  . $_SESSION['tokenUsuario'] . '&organization=' . $_SESSION['orgUsuario'];
 $curl = curl_init($service_url);
 
 $curl_post_data = array(

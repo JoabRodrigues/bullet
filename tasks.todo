@@ -1,14 +1,14 @@
 Mudar para portugues as classes e objetos
   ✔ orders para pedido de venda @done (5/26/2019, 3:14:41 PM)
-  ☐ invoices para faturas
+  ✔ invoices para faturas @done (5/27/2019, 7:14:23 PM)
   ☐ organizations para orgs
-  ☐ products_has_order para itens_do_pedido_de_venda
+  ✔ products_has_order para itens_do_pedido_de_venda @done (5/27/2019, 7:13:58 PM)
   ✔ products para produtos @done (5/26/2019, 5:11:41 PM)
   ☐ users para usuarios
   ✔ customers para clientes @done (5/26/2019, 1:49:46 PM)
 Mudar as classes para MVC
     ✔ pedidos de venda @done (5/26/2019, 3:15:25 PM)
     ☐ orgs
-    ☐ itens_do_pedido_de_venda
+    ✔ itens_do_pedido_de_venda @done (5/27/2019, 7:13:51 PM)
     ✔ produtos @done (5/26/2019, 5:11:32 PM)
     ☐ usuarios
