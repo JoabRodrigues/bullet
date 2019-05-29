@@ -9,7 +9,7 @@ echo '<main role="main" class="container"> ';
 
 // button new customer
 
-echo '<p><a href="/novopedido"><button type="button" class="btn btn-success">Novo Pedido</button></a></p>';
+echo '<p><button type="button" class="btn btn-success" data-toggle="modal" data-target="#meuModal">Novo Pedido</button></p>';
 
 include "pages/header-orders.html";
 
@@ -30,9 +30,13 @@ foreach ($response as $value) {
                     <td>' . $value3->cliente_id . ' - ' . ucwords(strtolower($value3->cliente_nome)) . '</td>
                     <td> R$ ' . number_format($value3->valor_total, 2) . ' </td>
                     <td>' . $value3->status . '</td>
-                    <td>
-                        <a href="/pedido?orders_id=' . $value3->id . '"><i class="fas fa-edit"></i></a>
-                    </td>
+                    <td>';
+                        if($value3->status == 'Aberto'){
+                            echo '<a href="/pedido?pedido_de_venda_id=' . $value3->id . '"><i class="fas fa-edit"></i></a>';
+                        }else{
+                            echo '<i class="far fa-check-circle " style="color:green"></i>';
+                        }
+                    echo '</td>
             </tr>';        
         }
     }
@@ -42,8 +46,8 @@ echo '</tbody>
 </table>';
 
 echo '</main>';
-?>
 
-<?php
-    include "pages/footer.html";
+include "novopedidoModal.php";
+
+include "pages/footer.html";
 ?>

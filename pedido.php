@@ -1,4 +1,5 @@
 <?php
+    include "validasessao.php";
     include "pages/header.html";
     include "pages/menu.php";
 ?>
@@ -8,12 +9,12 @@ echo '<main role="main" class="container"> ';
 
 // button new customer
 
-echo '<p><a href="/novoprodutodopedido?orders_id=' . $_GET['orders_id'] . '"><button type="button" class="btn btn-success">Novo Produto</button></a></p>';
+echo '<p><button type="button" class="btn btn-success" data-toggle="modal" data-target="#meuModal">Novo Produto</button></p>';
 
 include "pages/header-products_has_order.html";
 
 
-$response = file_get_contents('http://localhost/api/endpoints/products_has_order.php?token=47fc57393e93ef93f3653a1394ea4f57&organization=1&orders_id=' . $_GET['orders_id']);
+$response = file_get_contents('http://localhost/api/endpoints/itensPedidoDeVenda.php?token='. $_SESSION['tokenUsuario'] . '&organization=' . $_SESSION['orgUsuario'] . '&pedido_de_venda_id=' . $_GET['pedido_de_venda_id']);
 
 $response = json_decode($response);
 
@@ -25,15 +26,17 @@ if($response->message == 'No products_has_order found.'){
     $count = 0;
     foreach ($response as $value) {
         foreach ($value as $key => $value2) {
-            $count++;
-        echo '
-            <tr>
-            <th scope="row">' . $count . '</th>
-                <td>' . $value2->products_id . ' - ' . $value2->products_name . ' </td>
-                <td>' . $value2->quantity . ' </td>
-                <td>R$ ' . number_format($value2->amount, 2)  . '</td>
-                <td><i class="fas fa-edit"></i></td>
-                </tr>';        
+            foreach ($value2 as $key => $value3) {
+                $count++;
+                echo '
+                    <tr>
+                        <th scope="row">' . $count . '</th>
+                        <td>' . $value3->produto_id . ' - ' . $value3->produto_nome . ' </td>
+                        <td>' . $value3->quantidade . ' </td>
+                        <td>R$ ' . number_format($value3->valor, 2)  . '</td>
+                        <td><i class="fas fa-edit"></i></td>
+                    </tr>';        
+            }   
         }
     }    
 }
@@ -44,8 +47,8 @@ echo '</tbody>
 echo '<p><a href="/vendas"><button type="button" class="btn btn-success">Salvar</button></a></p>';
 
 echo '</main>';
-?>
 
-<?php
+    include "novoprodutodopedidoModal.php";
+
     include "pages/footer.html";
 ?>

@@ -9,7 +9,7 @@ echo '<main role="main" class="container"> ';
 
 // button new customer
 
-echo '<p><a href="/novocliente"><button type="button" class="btn btn-success">Novo Cliente</button></a></p>';
+echo '<p><button type="button" class="btn btn-success" data-toggle="modal" data-target="#meuModal">Novo Cliente</button></p>';
 
 include "pages/header-clientes.html";
 
@@ -42,10 +42,9 @@ echo '</tbody>
 
 echo '</main>';
 
-?>
+include "novoclienteModal.php";
 
-<?php
-    include "pages/footer.html";
+include "pages/footer.html";
 ?>
 
 

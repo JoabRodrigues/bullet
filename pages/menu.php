@@ -1,7 +1,7 @@
 <?php
     echo '
     <header>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top ">
       <a class="navbar-brand" href="/">Bullet Finanças</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -54,6 +54,9 @@
           
           echo '
           </ul>
+          <a class="nav-link" href="/configuracoesusuario">'. $_SESSION['emailUsuario'] .'</a>
+          
+          <a class="nav-link" href="/sair"><button type="button" class="btn btn-light">Sair</button></a>
         </div>
       </nav>
       </header>';

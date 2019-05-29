@@ -1,14 +1,14 @@
 <?php
+    include "validasessao.php";
     include "pages/header.html";
     include "pages/menu.php";
-?>
 
-<?php
-echo '<main role="main" class="container"> ';
+    echo '<main role="main" class="container"> ';
 
 // button new customer
 
-echo '<p><a href="/novoproduto"><button type="button" class="btn btn-success">Novo Produto</button></a></p>';
+//echo '<p><a href="/novoproduto"><button type="button" class="btn btn-success">Novo Produto</button></a></p>';
+echo '<p><button type="button" class="btn btn-success" data-toggle="modal" data-target="#meuModal">Novo Produto</button></p>';
 
 include "pages/header-products.html";
 
@@ -38,10 +38,10 @@ echo '</tbody>
 </table>';
 
 echo '</main>';
-?>
 
-<?php
-    include "pages/footer.html";
+include "novoprodutoModal.php";
+
+include "pages/footer.html";
 ?>
 
 

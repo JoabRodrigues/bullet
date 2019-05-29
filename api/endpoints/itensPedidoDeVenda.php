@@ -74,7 +74,7 @@
 
         // get posted data
         $data = json_decode(file_get_contents("php://input"));
-        
+
         // make sure data is not empty
         if(
             !is_null($data->produto_id) &&

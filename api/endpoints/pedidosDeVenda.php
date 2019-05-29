@@ -88,7 +88,10 @@
                 http_response_code(201);
         
                 // tell the user
-                echo json_encode(array("message" => "Pedido de venda criado com sucesso."));
+                echo json_encode(array(
+                    "id" => $pedidoDeVenda->id,
+                    "message" => "Pedido de venda criado com sucesso.")
+                );
             }
         
             // if unable to create the customer, tell the user
