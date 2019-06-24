@@ -32,9 +32,14 @@ foreach ($response as $value) {
                     <td>' . $value3->status . '</td>
                     <td>';
                         if($value3->status == 'Aberto'){
-                            echo '<a href="/pedido?pedido_de_venda_id=' . $value3->id . '"><i class="fas fa-edit"></i></a>';
+                            echo '<a href="/pedido?pedido_de_venda_id=' . $value3->id . '" class="btn btn-link" role="button" aria-pressed="true"><i class="fas fa-edit"></i></a>';
+                            echo '<a href="/pagamentospedido?pedido_de_venda_id=' . $value3->id . '" class="btn btn-link" role="button" aria-pressed="true"><i class="fas fa-dollar-sign"></i></a>';
+                            
+                        
+
                         }else{
-                            echo '<i class="far fa-check-circle " style="color:green"></i>';
+                            
+                            echo '<a href="#" class="btn btn-link" role="button" aria-pressed="true"><i class="far fa-check-circle " style="color:green"></i></a>';
                         }
                     echo '</td>
             </tr>';        

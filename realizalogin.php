@@ -10,7 +10,6 @@ $data = curl_exec($ch);
 curl_close($ch);
 
 $response = json_decode($data);
-//print_r($response);
 
 foreach ($response as $value) {
   foreach ($value as $value2) {
@@ -27,21 +26,6 @@ foreach ($response as $value) {
     }
   }
     
-}
-
-die();
-
-
-
-if($data_response->message == 'Order was created.'){
-    //envia para a pagina do pedido com o id no get
-    header("Location: /pedido?orders_id=" . $data_response->id);
-}else{
-    include "pages/header.html";
-
-    echo '<p>Erro ao criar o pedido. Favor informar o administrador.<p>';
-    echo '<p>Erro API' . $data_response->message . '</p>';
-    echo '<p><a href="/vendas"><button type="button" class="btn btn-success">Voltar</button></a></p>';
 }
 
 ?>
