@@ -14,7 +14,7 @@
         }
 
 
-        function getAllPagamentosPedidoDeVenda($pedido_de_venda_id){
+        function getAllItensPedidoDeVenda($pedido_de_venda_id){
             $query = "SELECT
                 ipv.id, ipv.produto_id, p.nome produto_nome, ipv.pedido_de_venda_id, ipv.quantidade, ipv.valor, ipv.users_id, 
                 case
@@ -61,7 +61,7 @@
             return $produtos; 
         }
 
-        function insertPagamentoPedidoDeVenda($pagamentoPedidoDeVenda){
+        function insertItemPedidoDeVenda($itemPedidoDeVenda){
             // query to insert record
             $query = "INSERT INTO
                 " . $this->table_name . "
