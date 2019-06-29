@@ -9,7 +9,7 @@ echo '<main role="main" class="container"> ';
 
 // button new customer
 
-echo '<p><button type="button" class="btn btn-success" data-toggle="modal" data-target="#meuModal">Novo Pedido</button></p>';
+echo '<p><button type="button" class="btn btn-success" data-toggle="modal" data-target="#meuModal">Novo Pedido Gis</button></p>';
 
 include "pages/header-orders.html";
 
