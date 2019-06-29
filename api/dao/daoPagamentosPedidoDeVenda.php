@@ -97,7 +97,8 @@
             if($stmt->execute()){
                 return $this->conn->lastInsertId();
             }else{
-                throw new Exception("Nenhum pagamento criado.");
+                $messageError = $stmt->errorInfo();
+                throw new Exception($messageError[2]);
             }
         }
     }

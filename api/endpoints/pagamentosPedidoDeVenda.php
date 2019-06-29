@@ -83,7 +83,6 @@
             !is_null($data->tipo_pagamento) &&
             !is_null($data->pedido_de_venda_id)
         ){
-        
             // set product property values
             $pagamentosPedidoDeVenda->valor_total = $data->valor_total;
             $pagamentosPedidoDeVenda->numero_parcelas = $data->numero_parcelas;
