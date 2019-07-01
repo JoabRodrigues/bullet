@@ -64,14 +64,14 @@ echo '</tbody>
 echo '<div class="container">
         <div class="row">
             <div class="col-sm">
-                <div class="alert alert-success" role="alert">Total Pedido: R$ ' . number_format($totalPedido, 2)  . '</div>
+                <div class="alert alert-success" align="center" role="alert">Total Pedido: R$ ' . number_format($totalPedido, 2)  . '</div>
             </div>
             <div class="col-sm">
                 ';
             if($totalPagamentos != $totalPedido){
-                echo '<div class="alert alert-danger" role="alert">Total Pagamentos: R$ ' . number_format($totalPagamentos, 2)  . '</div>';
+                echo '<div class="alert alert-danger" align="center" role="alert">Total Pagamentos: R$ ' . number_format($totalPagamentos, 2)  . '</div>';
             }else{
-                echo '<div class="alert alert-success" role="alert">Total Pagamentos: R$ ' . number_format($totalPagamentos, 2)  . '</div>';
+                echo '<div class="alert alert-success" align="center" role="alert">Total Pagamentos: R$ ' . number_format($totalPagamentos, 2)  . '</div>';
             }
             echo '</div>
                 </div>
