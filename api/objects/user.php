@@ -108,7 +108,7 @@ class User{
         $stmt->execute();
         
         while($row = $stmt->fetch(PDO::FETCH_ASSOC)){
-            return $row[id];  
+            return $row['id'];  
         }
 
         return null;
